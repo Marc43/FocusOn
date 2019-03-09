@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from django.http import HttpResponse
 from threading import Timer
+import base64
+
 
 from spotify.spotifyAPI import *
 from ai_module.ai_module import AIModule
@@ -21,7 +23,13 @@ def timeout():
 
 # Create your views here.
 def upload_image(request):
-    return JsonResponse({"Image": "Pollon"})
+    imgdata = base64.b64decode(request.POST['image'])
+    filename = 'some_image.jpg'
+    with open(filename, 'wb') as f:
+        f.write(imgdata)
+    res = get_image_emotion(filename)
+    aiModule.reorder_songs(res)
+    return JsonResponse({"result": True})
 
 def get_updated_info(request):
     return JsonResponse({"Updated Info": "Pollon"})

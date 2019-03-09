@@ -1,6 +1,8 @@
 import json
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
+from numpy import dot
+from numpy.linalg import norm
 
 class AIModule:
     def __init__(self):
@@ -21,6 +23,7 @@ class AIModule:
         self._next_tracks = self._tracks
         self._previous_tracks = []
         self._current_track = {}
+        self._face_coeff = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     def _getTrainDataFromFilename(self, filename):
         data = np.genfromtxt(filename, delimiter=',')
@@ -46,11 +49,23 @@ class AIModule:
         return self._normalize(self._model.predict(X))
 
     def get_next_song(self):
-        return self._next_tracks[0]
+        next_track = self._next_tracks[0]
+        if len(self._next_tracks) == 1:
+            self._next_tracks = self._tracks
+            self.reorder_songs(self._face_coeff)
+        return next_track
 
     def get_next_n_songs(self, n):
-        return None
+        if n > len(self._next_tracks):
+            self._next_tracks = self._tracks
+            self.reorder_songs(self._face_coeff)
+        if n >= len(self._next_tracks):
+            return self._next_tracks
+        else:
+            return self._next_tracks[:n]
 
+    def get_current_song(self):
+        return self._current_track
 
     def get_previous_song(self):
         if len(self._previous_tracks) == 0:
@@ -65,6 +80,9 @@ class AIModule:
     def reorder_songs(self, face_coeff):
         self._face_coeff = face_coeff
         diff_vector = []
-        for track in self._tracks:
-            None
+        for track in self._next_tracks:
+            diff_vector.append(dot(track['score'], face_coeff) / (norm(track['score']) * norm(face_coeff)))
+        self._next_tracks = [x for _, x in sorted(zip(diff_vector, self._next_tracks))]
+
+
 
