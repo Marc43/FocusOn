@@ -101,7 +101,7 @@ class SpotifyAPI:
         resp = requests.get(url, headers=headers)
         return resp.json()
 
-    def get_current_playlist(self):
+    def get_current_playback_info(self):
         url = SPOTIFY_API_URL + '/me/player'
         headers = self.AUTH_HEADER
         resp = requests.get(url, headers=headers)
@@ -188,6 +188,31 @@ class SpotifyAPI:
         body = {"uris": [song_uri]}
         headers.update({'cache-control': "no-cache"})
         response = requests.request("PUT", url, headers=headers, data=json.dumps(body))
+
+    def getSongProgress(self):
+        resp = self.get_current_playback_info()
+        return float(resp["progress_ms"])/1000
+
+    def reset_song_call(self):
+        url = SPOTIFY_API_URL + '/me/player/seek'
+        querystring = {"position_ms": "0"}
+
+        headers = {
+            'content-type': "multipart/form-data",
+            'cache-control': "no-cache"
+        }
+        headers.update(self.AUTH_HEADER)
+
+        response = requests.request("PUT", url,  headers=headers, params=querystring)
+
+        '''url = SPOTIFY_API_URL + '/me/player/seek'
+        headers = self.AUTH_HEADER
+        headers.update({'Content-type': 'application/json'})
+        headers.update({'Accept': 'application/json'})
+        parameters = {'position_ms': 1000}
+        response = requests.request("PUT", url, headers=headers, params=json.dumps(parameters))
+        aux = 0
+        '''
 
 if __name__ == '__main__':
     s = SpotifyAPI()

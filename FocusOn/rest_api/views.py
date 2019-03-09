@@ -43,9 +43,11 @@ def testing(request):
 
     #t.cancel()
 
-    #return HttpResponse('OK')
+    #response = spotifyAPI.get_available_devices()
+    spotifyAPI.reset_song_call()
+    return HttpResponse('OK')
 
-    return JsonResponse(spotifyAPI.get_track_info_call("7CEwFvLHy7KAr1g6ql3QdV"))
+    #return JsonResponse(spotifyAPI.get_track_info_call("7CEwFvLHy7KAr1g6ql3QdV"))
 
 
 def playMusic(request):
@@ -61,7 +63,13 @@ def playNextSong(request):
     return HttpResponse('OK')
 
 def playPreviousSong(request):
-    spotifyAPI.previous_song_call()
+    timeSec = spotifyAPI.getSongProgress()
+    if timeSec > 5.0:
+        spotifyAPI.reset_song_call()
+        t.cancel()
+        t = Timer(, timeout)
+    else:
+        spotifyAPI.previous_song_call()
     return HttpResponse('OK')
 
 def getUpcomingSongs(request):

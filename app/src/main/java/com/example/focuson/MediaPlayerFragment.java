@@ -21,7 +21,7 @@ public class MediaPlayerFragment extends Fragment {
     private boolean playingState = false; //Whether is playing or not!
 
     RequestQueue queue;
-    String serverURL ="http://127.0.0.1:8000/";
+    String serverURL ="http://130.82.237.29:8000/";
 
     private OnFragmentInteractionListener mListener;
 
@@ -59,7 +59,7 @@ public class MediaPlayerFragment extends Fragment {
                     playstop.setBackgroundResource(R.drawable.stop);
 
                     StringRequest stringRequest = new StringRequest(Request.Method.GET,
-                            serverURL + '',
+                            serverURL + "playMusic",
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
@@ -68,21 +68,28 @@ public class MediaPlayerFragment extends Fragment {
                             }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
+                            System.out.println("Error");
                         }
                     });
-
-// Add the request to the RequestQueue.
                     queue.add(stringRequest);
-
-
-
                 }
                 else {
                     playingState = false;
                     playstop.setBackgroundResource(R.drawable.play);
 
-                    //TODO Call to the server API
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                            serverURL + "pauseMusic",
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("Error");
+                        }
+                    });
+                    queue.add(stringRequest);
                 }
             }
         });
@@ -92,7 +99,19 @@ public class MediaPlayerFragment extends Fragment {
         previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO Call to the server API
+                StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                        serverURL + "playPreviousSong",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("Error");
+                    }
+                });
+                queue.add(stringRequest);
             }
         });
 
@@ -101,14 +120,25 @@ public class MediaPlayerFragment extends Fragment {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO Call to the server API
+                StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                        serverURL + "playNextSong",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("Error");
+                    }
+                });
+                queue.add(stringRequest);
             }
         });
 
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
