@@ -11,7 +11,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+
+import java.util.List;
 
 
 public class MainActivity extends FragmentActivity implements MediaPlayerFragment.OnFragmentInteractionListener {
@@ -19,7 +22,6 @@ public class MainActivity extends FragmentActivity implements MediaPlayerFragmen
     private DrawerLayout drawerLayout;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

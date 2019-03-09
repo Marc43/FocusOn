@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mediaplayer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/common_google_signin_btn_text_light_pressed"
     tools:context=".MediaPlayerFragment">
 
     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    app:layout_anchorGravity="center">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_anchorGravity="center">
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:contentDescription="@string/player_img_description"
-            android:src="@android:color/holo_purple" />
+            android:contentDescription="@string/player_img_description" />
+
+        <TextView
+            android:id="@+id/name_and_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,7 +63,10 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/songs_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:scrollbars="vertical"
+        android:clipToPadding="true"
+        android:overScrollMode="never" />
 
 </FrameLayout>

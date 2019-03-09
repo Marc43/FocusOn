@@ -51,49 +51,4 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback{
         map.getUiSettings().setZoomControlsEnabled(true);
     }
 
-    /*public static class SongsList extends RecyclerView.Adapter<SongsList.Holder> {
-
-        private ArrayList<dataPerSong> queuedSongs;
-
-        public static class dataPerSong {
-            public String name;
-            public String artist;
-            public String albumName;
-
-            public dataPerSong(String name, String artist, String albumName) {
-                this.name = name;
-                this.artist = artist;
-                this.albumName = albumName;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public String getArtist() {
-                return artist;
-            }
-
-            public String getAlbumName() {
-                return albumName;
-            }
-
-            public void setName(String name) {
-                this.name = name;
-            }
-
-            public void setArtist(String artist) {
-                this.artist = artist;
-            }
-
-            public void setAlbumName(String albumName) {
-                this.albumName = albumName;
-            }
-        }
-
-        public static class Holder extends RecyclerView.ViewHolder {
-            public
-        }
-
-    }*/
 }
