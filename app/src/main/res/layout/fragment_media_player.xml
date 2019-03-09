@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -14,31 +14,43 @@
     android:orientation="vertical"
     app:layout_anchorGravity="center">
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/player_img_description"
+            android:src="@android:color/holo_purple" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/next"
+                android:id="@+id/previous"
+                style="?attr/buttonBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/next" />
+                android:background="@drawable/previous" />
 
             <Button
                 android:id="@+id/playstop"
+                style="?attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />
 
             <Button
-                android:id="@+id/previous"
+                android:id="@+id/next"
+                style="?attr/buttonBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/previous" />
+                android:background="@drawable/next" />
 
         </LinearLayout>
     </LinearLayout>
@@ -46,6 +58,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/songs_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
 
-</fragment>
+</FrameLayout>
