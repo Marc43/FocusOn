@@ -1,20 +1,31 @@
 package com.example.focuson;
 
+import android.app.DownloadManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.ImageFormat;
+import android.media.ImageReader;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
 import java.util.List;
+
+import static android.content.pm.PermissionInfo.PROTECTION_NORMAL;
 
 
 public class MainActivity extends FragmentActivity implements MediaPlayerFragment.OnFragmentInteractionListener {
@@ -22,6 +33,11 @@ public class MainActivity extends FragmentActivity implements MediaPlayerFragmen
     private DrawerLayout drawerLayout;
     private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+    private ImageReader imgReader;
+    private RequestQueue queue;
+    private CameraInteractionToServer cameraInteractionToServer;
+    public static final String SERVER_URL = "http://130.82.11.40:8000/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +66,16 @@ public class MainActivity extends FragmentActivity implements MediaPlayerFragmen
         navigationView.getMenu().getItem(0).setChecked(true);
         String s = (String) navigationView.getMenu().getItem(0).getTitleCondensed();
         DisplayFragment(s);
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, PROTECTION_NORMAL);
+            System.out.println("Camera permission requested.");
+        }
+
+        queue = Volley.newRequestQueue(this);
+        imgReader = ImageReader.newInstance(100, 130, ImageFormat.YUV_420_888, 2);
+        cameraInteractionToServer = new CameraInteractionToServer(SERVER_URL, imgReader, queue);
     }
 
     private void DisplayFragment(String id) {
@@ -83,7 +109,5 @@ public class MainActivity extends FragmentActivity implements MediaPlayerFragmen
     public void onFragmentInteraction(Uri uri) {
         return;
     }
-
-
 
 }
