@@ -29,7 +29,13 @@ def testing(request):
     #response = spotifyAPI.connect_to_device("edbbf6dfa3678059cbf7252b056cc9c314126be6")
     #return JsonResponse(response)
     #return JsonResponse(spotifyAPI.get_list_playlists_call())
-    return JsonResponse(spotifyAPI.get_tracks_from_playlist_call("0zirc7mJkjQ2gboYTBL4XZ"))
+    res = spotifyAPI.get_tracks_from_playlist_call("4VpgpY0zaW5OKb4P7K0QNr")
+    output = [(x['track']['name'], x['track']['id']) for x in res['items']]
+    f = open('train.csv', 'w')
+    for x in output:
+        f.write(x[0] + ',' + x[1] + '\n')
+    f.close()
+    return JsonResponse({'data': []})
 
 def init(request):
     return spotifyAPI.generateToken()
