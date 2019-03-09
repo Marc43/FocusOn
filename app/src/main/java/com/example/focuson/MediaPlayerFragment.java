@@ -9,13 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 public class MediaPlayerFragment extends Fragment {
 
     private boolean playingState = false; //Whether is playing or not!
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    RequestQueue queue;
+    String serverURL ="http://127.0.0.1:8000/";
 
     private OnFragmentInteractionListener mListener;
 
@@ -42,6 +48,7 @@ public class MediaPlayerFragment extends Fragment {
 
         final Button playstop = (Button)view.findViewById(R.id.playstop);
         playstop.setBackgroundResource(R.drawable.play); //Play button
+        queue = Volley.newRequestQueue(getActivity().getApplicationContext());
         playingState = false; //Not playing
 
         playstop.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +58,25 @@ public class MediaPlayerFragment extends Fragment {
                     playingState = true;
                     playstop.setBackgroundResource(R.drawable.stop);
 
-                    //TODO Call to the server API
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                            serverURL + '',
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    // Display the first 500 characters of the response string.
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    });
+
+// Add the request to the RequestQueue.
+                    queue.add(stringRequest);
+
+
+
                 }
                 else {
                     playingState = false;
