@@ -92,7 +92,7 @@ def playPreviousSong(request):
     if timeSec > 5.0:
         spotifyAPI.reset_song_call()
         t.cancel()
-        t = Timer(, timeout)
+        t = Timer(20, timeout)
     else:
         spotifyAPI.previous_song_call()
     return HttpResponse('OK')
