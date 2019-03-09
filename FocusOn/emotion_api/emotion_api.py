@@ -1,5 +1,5 @@
 import requests
-from emotion_api.emotion_api_keys import *
+from emotion_api.emotion_api_keys import MICROSOFT_KEY, MICROSOFT_URL
 
 headers  = {'Ocp-Apim-Subscription-Key': MICROSOFT_KEY, "Content-Type": "application/octet-stream" }
 
