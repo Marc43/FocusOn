@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">FocusOn</string>
+    <string name="welcome_msg">Welcome to FocusOn! Open the navigation menu and get start focusing on the road.</string>
+    <string name="GoogleMaps">Google Maps</string>
+    <string name="Playlist">Dynamic Playlist</string>
+    <string name="Analytics">Analytics</string>
 </resources>
