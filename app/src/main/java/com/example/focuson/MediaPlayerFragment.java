@@ -3,19 +3,28 @@ package com.example.focuson;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MediaPlayerFragment extends Fragment {
 
     private boolean playingState = false; //Whether is playing or not!
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private List<DataPerSong> dataPerSongList = new ArrayList<>();
+    private RecyclerView dataPerSongRV;
+    private SongsListAdapter songsListAdapter;
 
     private OnFragmentInteractionListener mListener;
 
@@ -34,11 +43,37 @@ public class MediaPlayerFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    private void songListTesting() {
+        DataPerSong dps1 = new DataPerSong("My polla", "Un pollon", "Las pollas del averno");
+        dataPerSongList.add(dps1);
+        songsListAdapter.notifyItemInserted(dataPerSongList.size());
+
+        DataPerSong dps2 = new DataPerSong("STARTHACK APESTA", "Un pollon", "Las pollas del averno");
+        dataPerSongList.add(dps2);
+        songsListAdapter.notifyItemInserted(dataPerSongList.size());
+
+        DataPerSong dps3 = new DataPerSong("STARTHACK APESTA", "Un pollon", "Las pollas del averno");
+        dataPerSongList.add(dps3);
+        songsListAdapter.notifyItemInserted(dataPerSongList.size());
+
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_media_player, container, false);
+
+        dataPerSongRV = (RecyclerView) view.findViewById(R.id.songs_list);
+
+        songsListAdapter = new SongsListAdapter(dataPerSongList);
+        dataPerSongRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        dataPerSongRV.setHasFixedSize(true);
+        //dataPerSongRV.setItemAnimator(new DefaultItemAnimator());
+        dataPerSongRV.setAdapter(songsListAdapter);
+
+        songListTesting();
 
         final Button playstop = (Button)view.findViewById(R.id.playstop);
         playstop.setBackgroundResource(R.drawable.play); //Play button
@@ -120,5 +155,86 @@ public class MediaPlayerFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public static class DataPerSong {
+        public String name;
+        public String artist;
+        public String albumName;
+
+        public DataPerSong() {
+        }
+
+        public DataPerSong(String name, String artist, String albumName) {
+            this.name = name;
+            this.artist = artist;
+            this.albumName = albumName;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getArtist() {
+            return artist;
+        }
+
+        public String getAlbumName() {
+            return albumName;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setArtist(String artist) {
+            this.artist = artist;
+        }
+
+        public void setAlbumName(String albumName) {
+            this.albumName = albumName;
+        }
+    }
+
+    public static class SongsListAdapter extends RecyclerView.Adapter<SongsListAdapter.Holder> {
+
+        private List<DataPerSong> queuedSongs;
+
+        public static class Holder extends RecyclerView.ViewHolder {
+        public TextView name, artist, album;
+
+        public Holder(@NonNull View itemView) {
+            super(itemView);
+            name = (TextView) itemView.findViewById(R.id.name);
+            artist = (TextView) itemView.findViewById(R.id.artist);
+            album = (TextView) itemView.findViewById(R.id.album);
+        }
+    }
+
+        public SongsListAdapter(List<DataPerSong> queuedSongs) {
+            this.queuedSongs = queuedSongs;
+        }
+
+        @NonNull
+        @Override
+        public Holder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+            View itemView = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.songs_list, viewGroup, false);
+
+            return new Holder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull Holder holder, int position) {
+            DataPerSong dps = queuedSongs.get(position);
+            holder.name.setText(dps.getName());
+            holder.artist.setText(dps.getArtist());
+            holder.album.setText(dps.getAlbumName());
+        }
+
+        @Override
+        public int getItemCount() {
+            return queuedSongs.size();
+        }
     }
 }
