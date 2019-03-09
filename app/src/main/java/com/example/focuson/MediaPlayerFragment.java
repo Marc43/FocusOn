@@ -30,7 +30,9 @@ public class MediaPlayerFragment extends Fragment {
     private boolean playingState = false; //Whether is playing or not!
 
     RequestQueue queue;
-    String serverURL ="http://130.82.237.29:8000/";
+    //String serverURL ="http://130.82.237.29:8000/";
+    String serverURL ="http://130.82.11.40:8000/";
+
     private List<DataPerSong> dataPerSongList = new ArrayList<>();
     private RecyclerView dataPerSongRV;
     private SongsListAdapter songsListAdapter;
