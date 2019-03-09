@@ -29,6 +29,7 @@ public class MediaPlayerFragment extends Fragment {
 
     RequestQueue queue;
     public String serverURL = MainActivity.SERVER_URL;
+    
     private List<DataPerSong> dataPerSongList = new ArrayList<>();
     private RecyclerView dataPerSongRV;
     private SongsListAdapter songsListAdapter;
