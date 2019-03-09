@@ -3,10 +3,21 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 
 from spotify.spotifyAPI import *
+from RankingAI.rankingAI import *
 import requests
 from django.shortcuts import redirect
+from threading import Timer
+
+
+def timeout():
+    t = Timer(rankingAI.getNextSongDuration(), timeout)
+    t.start()
+    spotifyAPI.setNextSong(rankingAI.getNextSongID())
+
+
 
 spotifyAPI = SpotifyAPI()
+rankingAI = RankingAI()
 
 # Create your views here.
 def upload_image(request):
@@ -26,10 +37,42 @@ def callback(request):
     return HttpResponse(spotifyAPI.authorize())
 
 def testing(request):
-    #response = spotifyAPI.connect_to_device("edbbf6dfa3678059cbf7252b056cc9c314126be6")
-    #return JsonResponse(response)
-    #return JsonResponse(spotifyAPI.get_list_playlists_call())
-    return JsonResponse(spotifyAPI.get_tracks_from_playlist_call("0zirc7mJkjQ2gboYTBL4XZ"))
+
+    #t = Timer(10.0, timeout)
+    #t.start()
+
+    #t.cancel()
+
+    #return HttpResponse('OK')
+
+    return JsonResponse(spotifyAPI.get_track_info_call("7CEwFvLHy7KAr1g6ql3QdV"))
+
+
+def playMusic(request):
+    spotifyAPI.play_song_call()
+    return HttpResponse('OK')
+
+def pauseMusic(request):
+    spotifyAPI.pause_song_call()
+    return HttpResponse('OK')
+
+def playNextSong(request):
+    spotifyAPI.next_song_call()
+    return HttpResponse('OK')
+
+def playPreviousSong(request):
+    spotifyAPI.previous_song_call()
+    return HttpResponse('OK')
+
+def getUpcomingSongs(request):
+    return JsonResponse(spotifyAPI.getUpcomingSongsInfo())
+
+def playNewSong(request):
+    t = Timer(8, timeout)
+    t.start()
+    spotifyAPI.setNextSong(rankingAI.getNextSongID())
+    return HttpResponse('OK')
+
 
 def init(request):
     return spotifyAPI.generateToken()
