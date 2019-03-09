@@ -1,5 +1,5 @@
 import requests
-from FocusOn.rest_api.emotion_api.emotion_api_keys import *
+from emotion_api.emotion_api_keys import *
 
 headers  = {'Ocp-Apim-Subscription-Key': MICROSOFT_KEY, "Content-Type": "application/octet-stream" }
 
