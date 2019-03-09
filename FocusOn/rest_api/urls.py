@@ -8,6 +8,13 @@ urlpatterns = [
     path('get_alerts', views.get_updated_info, name='get_alerts'),
     path('callback', views.callback, name='callback'),
     path('get_token', views.get_token, name='get_token'),
+    path('playMusic', views.playMusic, name='playMusic'),
+    path('pauseMusic', views.pauseMusic, name='pauseMusic'),
+    path('playNextSong', views.playNextSong, name='playNextSong'),
+    path('playPreviousSong', views.playPreviousSong, name='playPreviousSong'),
+    path('getUpcomingSongs', views.getUpcomingSongs, name='getUpcomingSongs'),
+    path('playNewSong', views.playNewSong, name='playNewSong'),
     path('testing', views.testing, name='testing'),
     path('', views.init, name='init')
+
 ]
