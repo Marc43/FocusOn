@@ -21,14 +21,17 @@
         <item
             android:id="@+id/gmaps"
             android:icon="@android:drawable/ic_dialog_map"
-            android:title="@string/GoogleMaps" />
+            android:title="@string/GoogleMaps"
+            android:titleCondensed="GOOGLE_MAPS"/>
         <item
             android:id="@+id/dplaylist"
             android:icon="@drawable/music_icon"
-            android:title="@string/Playlist" />
+            android:title="@string/Playlist"
+            android:titleCondensed="DYNAMIC_PLAYLIST"/>
         <item
             android:id="@+id/anal"
             android:icon="@drawable/analytics"
-            android:title="@string/Analytics" />
+            android:title="@string/Analytics"
+            android:titleCondensed="ANALYTICS"/>
     </group>
 </menu>
