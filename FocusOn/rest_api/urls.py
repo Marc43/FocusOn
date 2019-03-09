@@ -7,5 +7,7 @@ urlpatterns = [
     path('get_updated_info', views.get_updated_info, name='get_updated_info'),
     path('get_alerts', views.get_updated_info, name='get_alerts'),
     path('callback', views.callback, name='callback'),
-    path('get_token', views.get_token, name='get_token')
+    path('get_token', views.get_token, name='get_token'),
+    path('testing', views.testing, name='testing'),
+    path('', views.init, name='init')
 ]
