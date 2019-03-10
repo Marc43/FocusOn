@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestRegressor
 from numpy import dot
 from numpy.linalg import norm
 import pickle
+import copy
 
 class AIModule:
     def __init__(self):
@@ -23,7 +24,7 @@ class AIModule:
         self.generateTracksScore(spotify)
         self._next_tracks = self._tracks
         self._previous_tracks = []
-        self._current_track = self._tracks[0]
+        self._current_track = copy.deepcopy(self._tracks[0])
         self._next_tracks.pop(0)
         self._face_coeff = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -53,18 +54,18 @@ class AIModule:
         return self._normalize(self._model.predict(X))
 
     def get_next_song(self):
-        next_track = self._next_tracks[0]
+        next_track = copy.deepcopy(self._next_tracks[0])
         self._next_tracks.pop(0)
         if len(self._next_tracks) == 1:
-            self._next_tracks = self._tracks
+            self._next_tracks = copy.deepcopy(self._tracks)
             self.reorder_songs(self._face_coeff)
-        self._previous_tracks.append(self._current_track)
+        self._previous_tracks.append(copy.deepcopy(self._current_track))
         self._current_track = next_track
         return next_track
 
     def get_next_n_songs(self, n):
         if n > len(self._next_tracks):
-            self._next_tracks = self._tracks
+            self._next_tracks = copy.deepcopy(self._tracks)
             self.reorder_songs(self._face_coeff)
         if n >= len(self._next_tracks):
             return self._next_tracks
@@ -78,9 +79,9 @@ class AIModule:
         if len(self._previous_tracks) == 0:
             return self._current_track
         else:
-            prev_song = self._previous_tracks[-1]
+            prev_song = copy.deepcopy(self._previous_tracks[-1])
             self._previous_tracks.pop()
-            self._next_tracks.append(self._current_track)
+            self._next_tracks.append(copy.deepcopy(self._current_track))
             self._current_track = prev_song
             return prev_song
 
