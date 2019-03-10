@@ -1,8 +1,12 @@
 package com.example.focuson;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,8 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +28,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MediaPlayerFragment extends Fragment {
 
@@ -40,7 +50,6 @@ public class MediaPlayerFragment extends Fragment {
 
     }
 
-
     public static MediaPlayerFragment newInstance(String param1, String param2) {
         MediaPlayerFragment fragment = new MediaPlayerFragment();
 
@@ -50,6 +59,9 @@ public class MediaPlayerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     private void songListTesting() {
@@ -68,12 +80,7 @@ public class MediaPlayerFragment extends Fragment {
 
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_media_player, container, false);
-
+    private void setupRecyclerView(View view) {
         dataPerSongRV = (RecyclerView) view.findViewById(R.id.songs_list);
 
         songsListAdapter = new SongsListAdapter(dataPerSongList);
@@ -81,8 +88,17 @@ public class MediaPlayerFragment extends Fragment {
         dataPerSongRV.setHasFixedSize(true);
         //dataPerSongRV.setItemAnimator(new DefaultItemAnimator());
         dataPerSongRV.setAdapter(songsListAdapter);
+    }
 
-        songListTesting();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        final View view = inflater.inflate(R.layout.fragment_media_player, container, false);
+
+        setupRecyclerView(view);
+
+        //songListTesting();
 
         final Button playstop = (Button)view.findViewById(R.id.playstop);
         playstop.setBackgroundResource(R.drawable.play); //Play button
@@ -129,6 +145,8 @@ public class MediaPlayerFragment extends Fragment {
                     });
                     queue.add(stringRequest);
                 }
+                whichSong(view);
+                getUpcomingSongs(view);
             }
         });
 
@@ -150,6 +168,8 @@ public class MediaPlayerFragment extends Fragment {
                     }
                 });
                 queue.add(stringRequest);
+                whichSong(view);
+                getUpcomingSongs(view);
             }
         });
 
@@ -171,10 +191,101 @@ public class MediaPlayerFragment extends Fragment {
                     }
                 });
                 queue.add(stringRequest);
+                whichSong(view);
+                getUpcomingSongs(view);
             }
         });
 
         return view;
+    }
+
+    private void whichSong(final View view) {
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                serverURL + "whichSong",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject object = new JSONObject(response);
+                            String name, artist, album, url;
+                            name = object.getString("song");
+                            artist = object.getString("artist");
+                            album = object.getString("album");
+                            url = object.getString("cover");
+
+                            ImageView imageView = (ImageView) view.findViewById(R.id.album);
+                            Bitmap bf = null;
+                            try {
+                                URL newurl = new URL(url);
+                                bf = BitmapFactory.decodeStream(newurl.openConnection() .getInputStream());
+                            }
+                            catch(Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (bf != null) {
+                                imageView.setImageBitmap(bf);
+                            }
+
+                            TextView nameAndArtist = (TextView) view.findViewById(R.id.name_and_artist);
+                            nameAndArtist.setText(name + " - " + artist);
+
+                            TextView albumName = (TextView) view.findViewById(R.id.album_name);
+                            albumName.setText(album);
+
+                        }
+                        catch(JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("Error");
+                    }
+                });
+                queue.add(stringRequest);
+
+    }
+
+    private void getUpcomingSongs(final View view) {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET,
+                serverURL + "nextSongsOnTop",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject object = new JSONObject(response);
+                            JSONArray data = object.getJSONArray("data");
+
+                            dataPerSongList.clear();
+                            songsListAdapter.notifyItemInserted(dataPerSongList.size());
+
+                            setupRecyclerView(view);
+
+                            String name, artist, album;
+                            for (int i = 0; i < data.length(); i++){
+                                JSONObject o = data.getJSONObject(i);
+                                name = o.getString("song");
+                                artist = o.getString("artist");
+                                album = o.getString("album");
+                                DataPerSong dps = new DataPerSong(name, artist, album);
+                                dataPerSongList.add(dps);
+                                songsListAdapter.notifyItemInserted(dataPerSongList.size());
+                            }
+
+                        }
+                        catch(JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error");
+            }
+        });
+        queue.add(stringRequest);
     }
 
     public void onButtonPressed(Uri uri) {
