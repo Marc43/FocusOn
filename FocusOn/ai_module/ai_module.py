@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from numpy import dot
 from numpy.linalg import norm
+import pickle
 
 class AIModule:
     def __init__(self):
@@ -31,7 +32,9 @@ class AIModule:
 
     def trainModel(self, X, y):
         self._model = RandomForestRegressor(n_estimators=100)
-        self._model.fit(X, y)
+        #self._model.fit(X, y)
+        #pickle.dump(self._model, open('model.sav', 'wb'))
+        self._model = pickle.load(open('model.sav', 'rb'))
         self._model_loaded = True
 
     def generateTracksScore(self, spotify):

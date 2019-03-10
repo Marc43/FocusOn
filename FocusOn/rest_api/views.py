@@ -2,18 +2,14 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from threading import Timer
 from PIL import Image
-import io
-import base64
-import numpy as np
-
 
 from spotify.spotifyAPI import *
 from ai_module.ai_module import AIModule
 from emotion_api.emotion_api import get_image_emotion
 from RankingAI.rankingAI import *
 from django.views.decorators.csrf import csrf_exempt
-import matplotlib.pylab as plt
 
+i = 0
 
 def playNewSong():
     cancelTimer()
