@@ -23,7 +23,8 @@ class AIModule:
         self.generateTracksScore(spotify)
         self._next_tracks = self._tracks
         self._previous_tracks = []
-        self._current_track = self.get_next_song()
+        self._current_track = self._tracks[0]
+        self._next_tracks.pop(0)
         self._face_coeff = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     def _getTrainDataFromFilename(self, filename):
@@ -57,6 +58,8 @@ class AIModule:
         if len(self._next_tracks) == 1:
             self._next_tracks = self._tracks
             self.reorder_songs(self._face_coeff)
+        self._previous_tracks.append(self._current_track)
+        self._current_track = next_track
         return next_track
 
     def get_next_n_songs(self, n):

@@ -20,6 +20,7 @@ class SpotifyAPI:
     API_TOKEN_REFRESH = None
     TOKEN_TYPE = None
     AUTH_HEADER = None
+    DEVICE_ID = '89cb99b18fd88779fb41dcf5536e46b422061d6e'
 
     def generateToken(self):
         parameters = {
@@ -125,17 +126,17 @@ class SpotifyAPI:
 
     def pause_song_call(self):
         url = SPOTIFY_API_URL + '/me/player/pause'
-        #parameters = {"device_id": device_id}
+        parameters = {"device_id": self.DEVICE_ID}
         headers = self.AUTH_HEADER
         headers.update({'cache-control': "no-cache"})
-        response = requests.request("PUT", url, headers=headers)
+        response = requests.request("PUT", url, headers=headers, params=parameters)
 
     def play_song_call(self):
         url = "https://api.spotify.com/v1/me/player/play"
-        #parameters = {"device_id": device_id}
+        parameters = {"device_id": self.DEVICE_ID}
         headers = self.AUTH_HEADER
         headers.update({'cache-control': "no-cache"})
-        response = requests.request("PUT", url, headers=headers)
+        response = requests.request("PUT", url, headers=headers, params=parameters)
 
     def next_song_call(self):
         url = SPOTIFY_API_URL + '/me/player/next'
@@ -212,6 +213,13 @@ class SpotifyAPI:
         response = requests.request("PUT", url, headers=headers, params=json.dumps(parameters))
         aux = 0
         '''
+    def set_playback_info(self):
+        url = SPOTIFY_API_URL + '/me/player'
+        querystring = {"device_ids": [self.DEVICE_ID]}
+        headers = self.AUTH_HEADER
+        headers.update({'Content-Type': 'application/json', 'cache-control': "no-cache"})
+        resp = requests.request("PUT", url,  headers=headers, params=querystring)
+        return resp.json()
 
 if __name__ == '__main__':
     s = SpotifyAPI()

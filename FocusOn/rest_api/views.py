@@ -67,6 +67,7 @@ def get_token(request):
 def callback(request):
     spotifyAPI.setAuthToken(request.GET['code'])
     res1 = spotifyAPI.authorize()
+    spotifyAPI.set_playback_info()
     global aiModule, initilizedAI
     if not initilizedAI:
         res2 = spotifyAPI.get_tracks_from_playlist_call("4VpgpY0zaW5OKb4P7K0QNr")
@@ -75,7 +76,8 @@ def callback(request):
     return HttpResponse(res1)
 
 def testing(request):
-
+    response = spotifyAPI.get_available_devices()
+    aux = 0
     #response = spotifyAPI.connect_to_device("edbbf6dfa3678059cbf7252b056cc9c314126be6")
     #return JsonResponse(response)
     #return JsonResponse(spotifyAPI.get_list_playlists_call())
@@ -110,7 +112,10 @@ def testing(request):
 
 
 def playMusic(request):
-    timeSec = spotifyAPI.getSongProgress()
+    try:
+        timeSec = spotifyAPI.getSongProgress()
+    except Exception:
+        timeSec = 0
     durationTime = aiModule.get_current_song()['track']['duration_ms'] / 1000
     setTimer(durationTime-timeSec)
     spotifyAPI.play_song_call()
