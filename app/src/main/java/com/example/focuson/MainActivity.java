@@ -27,7 +27,6 @@ import java.util.List;
 
 import static android.content.pm.PermissionInfo.PROTECTION_NORMAL;
 
-
 public class MainActivity extends FragmentActivity implements MediaPlayerFragment.OnFragmentInteractionListener, AnalyticsFragment.OnFragmentInteractionListener {
 
     private DrawerLayout drawerLayout;

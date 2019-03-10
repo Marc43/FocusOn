@@ -15,23 +15,36 @@
         app:layout_anchorGravity="center">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/album"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_height="221dp"
+            android:layout_gravity="center|center_horizontal|center_vertical"
+            android:layout_marginTop="80dp"
             android:contentDescription="@string/player_img_description" />
 
         <TextView
             android:id="@+id/name_and_artist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:layout_marginTop="14dp"
+            android:foregroundGravity="center"
+            android:gravity="center|center_vertical"
+            android:textColor="@color/colorLightenGray"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/album_name"
+            android:layout_width="match_parent"
+            android:layout_height="66dp"
+            android:foregroundGravity="center"
+            android:gravity="center|center_vertical"
+            android:textColor="@color/colorLightenGray" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:gravity="bottom|center"
             android:orientation="horizontal">
 
             <Button
@@ -39,23 +52,26 @@
                 style="?attr/buttonBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/previous" />
+                android:layout_gravity="bottom|center"
+                android:background="@drawable/previous"
+                android:gravity="bottom" />
 
             <Button
                 android:id="@+id/playstop"
                 style="?attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:gravity="bottom" />
 
             <Button
                 android:id="@+id/next"
                 style="?attr/buttonBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/next" />
+                android:layout_gravity="bottom|center"
+                android:background="@drawable/next"
+                android:gravity="bottom" />
 
         </LinearLayout>
     </LinearLayout>

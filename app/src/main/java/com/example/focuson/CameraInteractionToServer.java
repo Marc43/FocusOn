@@ -134,7 +134,7 @@ public class CameraInteractionToServer {
         try {
             CaptureRequest.Builder builder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
             builder.addTarget(imageReader.getSurface());
-            builder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range(1,5));
+            builder.set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, new Range(1,1));
             return builder.build();
         } catch (CameraAccessException e) {
             Log.e(TAG, e.getMessage());
