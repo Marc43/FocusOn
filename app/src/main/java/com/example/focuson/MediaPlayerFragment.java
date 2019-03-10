@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,8 @@ import android.widget.TextView;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -62,6 +65,7 @@ public class MediaPlayerFragment extends Fragment {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
     }
 
     private void songListTesting() {
@@ -196,7 +200,31 @@ public class MediaPlayerFragment extends Fragment {
             }
         });
 
+        callAsynchronousTask(view);
+
         return view;
+    }
+
+    public void callAsynchronousTask(final View view) {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            getUpcomingSongs(view);
+                            whichSong(view);
+
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 5000); //execute in every 50000 ms
     }
 
     private void whichSong(final View view) {
