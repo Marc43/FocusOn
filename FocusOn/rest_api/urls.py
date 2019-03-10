@@ -13,6 +13,8 @@ urlpatterns = [
     path('playNextSong', views.playNextSong, name='playNextSong'),
     path('playPreviousSong', views.playPreviousSong, name='playPreviousSong'),
     path('getUpcomingSongs', views.getUpcomingSongs, name='getUpcomingSongs'),
+    path('whichSong', views.whichSong, name='whichSong'),
+    path('nextSongsOnTop', views.nextSongsOnTop, name='nextSongsOnTop'),
     path('testing', views.testing, name='testing'),
     path('', views.init, name='init')
 

@@ -139,9 +139,35 @@ def playPreviousSong(request):
         spotifyAPI.setNextSong(prevSongURI)
     return HttpResponse('OK')
 
-def getUpcomingSongs(request):
-    return JsonResponse(spotifyAPI.getUpcomingSongsInfo())
+def whichSong(request):
+    currentSong = aiModule.get_current_song()
+    albumName = currentSong['track']['album']['name']
+    songName = currentSong['track']['name']
+    artistName = currentSong['track']['artists'][0]['name']
+    coverLink = currentSong['track']['album']['images'][1]['url']
+    response = {'song': songName,
+                'album': albumName,
+                'artist': artistName,
+                'cover': coverLink
+                }
+    return JsonResponse(response)
 
+def nextSongsOnTop(request):
+    currentSongs = aiModule.get_next_n_songs(3)
+    response = []
+    for currentSong in currentSongs:
+        albumName = currentSong['track']['album']['name']
+        songName = currentSong['track']['name']
+        artistName = currentSong['track']['artists'][0]['name']
+        response.append({'song': songName,
+                'album': albumName,
+                'artist': artistName
+                })
+    return JsonResponse({'data': response})
+
+def getUpcomingSongs(request):
+
+    return JsonResponse()
 
 def init(request):
     return spotifyAPI.generateToken()
