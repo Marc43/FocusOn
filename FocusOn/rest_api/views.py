@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from threading import Timer
 from PIL import Image
+import io
 
 from spotify.spotifyAPI import *
 from ai_module.ai_module import AIModule
