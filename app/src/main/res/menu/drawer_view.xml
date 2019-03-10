@@ -33,5 +33,10 @@
             android:icon="@drawable/analytics"
             android:title="@string/Analytics"
             android:titleCondensed="ANALYTICS"/>
+        <item
+            android:id="@+id/Preferences"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="Preferences"
+            android:titleCondensed="PREFERENCES"/>
     </group>
 </menu>

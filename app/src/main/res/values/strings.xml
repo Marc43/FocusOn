@@ -7,6 +7,16 @@
     <string name="title_activity_maps">Map</string>
     <string name="player_img_description">Song image</string>
 
+    <string name="user_ppm">Heartbeats per minute</string>
+    <string name="user_vel_limit">Times you speed</string>
+    <string name="user_distr_road">Distracted</string>
+    <string name="user_n_raged">Raged</string>
+
+    <string name="ppm">72</string>
+    <string name="times_vel">6</string>
+    <string name="times_raged">1</string>
+    <string name="distr_road">9</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

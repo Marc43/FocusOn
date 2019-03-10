@@ -28,7 +28,7 @@ import java.util.List;
 import static android.content.pm.PermissionInfo.PROTECTION_NORMAL;
 
 
-public class MainActivity extends FragmentActivity implements MediaPlayerFragment.OnFragmentInteractionListener {
+public class MainActivity extends FragmentActivity implements MediaPlayerFragment.OnFragmentInteractionListener, AnalyticsFragment.OnFragmentInteractionListener {
 
     private DrawerLayout drawerLayout;
     private FragmentManager fragmentManager = getSupportFragmentManager();
@@ -74,9 +74,10 @@ public class MainActivity extends FragmentActivity implements MediaPlayerFragmen
         }
 
         queue = Volley.newRequestQueue(this);
-        imgReader = ImageReader.newInstance(100, 130, ImageFormat.YUV_420_888, 2);
-        cameraInteractionToServer = new CameraInteractionToServer(SERVER_URL, imgReader, queue);
+        imgReader = ImageReader.newInstance(2048, 1563, ImageFormat.JPEG, 20);
+        cameraInteractionToServer = new CameraInteractionToServer(SERVER_URL, imgReader, queue, this);
     }
+
 
     private void DisplayFragment(String id) {
         fragmentTransaction = fragmentManager.beginTransaction();
@@ -92,7 +93,6 @@ public class MainActivity extends FragmentActivity implements MediaPlayerFragmen
                     fragmentTransaction.add(R.id.content_frame, tmp);
                     fragmentTransaction.commit();
                 }
-
                 break;
             case "DYNAMIC_PLAYLIST":
                 tmp = new MediaPlayerFragment();
@@ -100,6 +100,10 @@ public class MainActivity extends FragmentActivity implements MediaPlayerFragmen
                 fragmentTransaction.addToBackStack(null).commit();
                 break;
             case "ANALYTICS":
+                tmp = new AnalyticsFragment();
+                fragmentTransaction.replace(R.id.content_frame, tmp);
+                fragmentTransaction.addToBackStack(null).commit();
+                break;
             default:
                 System.err.println("Seems like we did not implement that.");
                 break;
