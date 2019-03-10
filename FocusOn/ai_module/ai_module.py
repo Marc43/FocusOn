@@ -16,13 +16,13 @@ class AIModule:
 
     def init(self, tracks, spotify):
         self._tracks = tracks
-        X, y = self._getTrainDataFromFilename('/home/fmartinez/FocusOn/FocusOn/ai_module/train.csv')
+        X, y = self._getTrainDataFromFilename('ai_module/train.csv')
         y = np.array([self._normalize(yi) for yi in y])
         self.trainModel(X, y)
         self.generateTracksScore(spotify)
         self._next_tracks = self._tracks
         self._previous_tracks = []
-        self._current_track = {}
+        self._current_track = self.get_next_song()
         self._face_coeff = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     def _getTrainDataFromFilename(self, filename):
@@ -36,7 +36,7 @@ class AIModule:
 
     def generateTracksScore(self, spotify):
         for i in range(len(self._tracks)):
-            info = json.loads(spotify.get_track_info_call(self._tracks[i]['track']['id']))['audio_features'][0]
+            info = spotify.get_track_info_call(self._tracks[i]['track']['id'])['audio_features'][0]
             aux = []
             for feature in self._trackFeatures:
                 aux.append(info[feature])
@@ -50,6 +50,7 @@ class AIModule:
 
     def get_next_song(self):
         next_track = self._next_tracks[0]
+        self._next_tracks.pop(0)
         if len(self._next_tracks) == 1:
             self._next_tracks = self._tracks
             self.reorder_songs(self._face_coeff)

@@ -11,15 +11,35 @@ from RankingAI.rankingAI import *
 
 import matplotlib.pylab as plt
 
+
+def playNewSong():
+    cancelTimer()
+    nextSong = aiModule.get_next_song()
+    nextSongURI = nextSong['track']['uri']
+    nextDurationTime = nextSong['track']['duration_ms']/1000
+    spotifyAPI.setNextSong(nextSongURI)
+    setTimer(nextDurationTime)
+
+def resetTimer(duration):
+    global t
+    t.cancel()
+    t = Timer(duration-0.5, playNewSong)
+    t.start()
+
+def setTimer(duration):
+    global t
+    t = Timer(duration-0.5, playNewSong)
+    t.start()
+
+def cancelTimer():
+    global t
+    t.cancel()
+
 spotifyAPI = SpotifyAPI()
 aiModule = AIModule()
 rankingAI = RankingAI()
-
-
-def timeout():
-    t = Timer(rankingAI.getNextSongDuration(), timeout)
-    t.start()
-    spotifyAPI.setNextSong(rankingAI.getNextSongID())
+t = Timer(0.0, playNewSong)
+initilizedAI = False
 
 # Create your views here.
 def upload_image(request):
@@ -43,9 +63,11 @@ def get_token(request):
 def callback(request):
     spotifyAPI.setAuthToken(request.GET['code'])
     res1 = spotifyAPI.authorize()
-    res2 = spotifyAPI.get_tracks_from_playlist_call("4VpgpY0zaW5OKb4P7K0QNr")
-    global aiModule
-    aiModule.init(res2['items'], spotifyAPI)
+    global aiModule, initilizedAI
+    if not initilizedAI:
+        res2 = spotifyAPI.get_tracks_from_playlist_call("4VpgpY0zaW5OKb4P7K0QNr")
+        aiModule.init(res2['items'], spotifyAPI)
+        initilizedAI = True
     return HttpResponse(res1)
 
 def testing(request):
@@ -84,35 +106,38 @@ def testing(request):
 
 
 def playMusic(request):
+    timeSec = spotifyAPI.getSongProgress()
+    durationTime = aiModule.get_current_song()['track']['duration_ms'] / 1000
+    setTimer(durationTime-timeSec)
     spotifyAPI.play_song_call()
     return HttpResponse('OK')
 
 def pauseMusic(request):
+    cancelTimer()
     spotifyAPI.pause_song_call()
     return HttpResponse('OK')
 
 def playNextSong(request):
-    spotifyAPI.next_song_call()
+    playNewSong()
     return HttpResponse('OK')
 
 def playPreviousSong(request):
     timeSec = spotifyAPI.getSongProgress()
     if timeSec > 5.0:
         spotifyAPI.reset_song_call()
-        t.cancel()
-        t = Timer(20, timeout)
+        durationTime = aiModule.get_current_song()['track']['duration_ms']/1000
+        resetTimer(durationTime)
     else:
-        spotifyAPI.previous_song_call()
+        prevSong = aiModule.get_previous_song()
+        prevSongURI = prevSong['track']['uri']
+        prevDurationTime = prevSong['track']['duration_ms']/1000
+        resetTimer(prevDurationTime)
+        spotifyAPI.setNextSong(prevSongURI)
     return HttpResponse('OK')
 
 def getUpcomingSongs(request):
     return JsonResponse(spotifyAPI.getUpcomingSongsInfo())
 
-def playNewSong(request):
-    t = Timer(8, timeout)
-    t.start()
-    spotifyAPI.setNextSong(rankingAI.getNextSongID())
-    return HttpResponse('OK')
 
 def init(request):
     return spotifyAPI.generateToken()

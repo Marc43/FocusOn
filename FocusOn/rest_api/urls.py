@@ -13,7 +13,6 @@ urlpatterns = [
     path('playNextSong', views.playNextSong, name='playNextSong'),
     path('playPreviousSong', views.playPreviousSong, name='playPreviousSong'),
     path('getUpcomingSongs', views.getUpcomingSongs, name='getUpcomingSongs'),
-    path('playNewSong', views.playNewSong, name='playNewSong'),
     path('testing', views.testing, name='testing'),
     path('', views.init, name='init')
 
