@@ -51,7 +51,8 @@ def upload_image(request):
     filename = 'some_image{}.jpg'.format(i)
     image.save(filename)
     res = get_image_emotion(filename)
-    aiModule.reorder_songs(res)
+    if len(res) != 0:
+        aiModule.reorder_songs(res)
     i += 1
     return JsonResponse({"result": True})
 

@@ -130,6 +130,7 @@ class SpotifyAPI:
         headers = self.AUTH_HEADER
         headers.update({'cache-control': "no-cache"})
         response = requests.request("PUT", url, headers=headers, params=parameters)
+        aux = 0
 
     def play_song_call(self):
         url = "https://api.spotify.com/v1/me/player/play"
@@ -215,7 +216,7 @@ class SpotifyAPI:
         '''
     def set_playback_info(self):
         url = SPOTIFY_API_URL + '/me/player'
-        querystring = {"device_ids": [self.DEVICE_ID]}
+        querystring = {"device_ids": [self.DEVICE_ID], "play": True}
         headers = self.AUTH_HEADER
         headers.update({'Content-Type': 'application/json', 'cache-control': "no-cache"})
         resp = requests.request("PUT", url,  headers=headers, params=querystring)
