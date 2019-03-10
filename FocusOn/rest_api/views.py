@@ -1,14 +1,17 @@
 from django.http import JsonResponse
 from django.http import HttpResponse
 from threading import Timer
+from PIL import Image
+import io
 import base64
+import numpy as np
 
 
 from spotify.spotifyAPI import *
 from ai_module.ai_module import AIModule
 from emotion_api.emotion_api import get_image_emotion
 from RankingAI.rankingAI import *
-
+from django.views.decorators.csrf import csrf_exempt
 import matplotlib.pylab as plt
 
 
@@ -42,13 +45,17 @@ t = Timer(0.0, playNewSong)
 initilizedAI = False
 
 # Create your views here.
+@csrf_exempt
 def upload_image(request):
-    imgdata = base64.b64decode(request.POST['image'])
-    filename = 'some_image.jpg'
-    with open(filename, 'wb') as f:
-        f.write(imgdata)
+    global i
+    imgdata = base64.b64decode(str(request.POST['image']))
+    image = Image.open(io.BytesIO(imgdata))
+    image = image.rotate(90)
+    filename = 'some_image{}.jpg'.format(i)
+    image.save(filename)
     res = get_image_emotion(filename)
     aiModule.reorder_songs(res)
+    i += 1
     return JsonResponse({"result": True})
 
 def get_updated_info(request):
