@@ -1,27 +1,58 @@
 from django.http import JsonResponse
 from django.http import HttpResponse
 from threading import Timer
+from PIL import Image
 
 from spotify.spotifyAPI import *
 from ai_module.ai_module import AIModule
 from emotion_api.emotion_api import get_image_emotion
 from RankingAI.rankingAI import *
+from django.views.decorators.csrf import csrf_exempt
 
-import matplotlib.pylab as plt
+i = 0
+
+def playNewSong():
+    cancelTimer()
+    nextSong = aiModule.get_next_song()
+    nextSongURI = nextSong['track']['uri']
+    nextDurationTime = nextSong['track']['duration_ms']/1000
+    spotifyAPI.setNextSong(nextSongURI)
+    setTimer(nextDurationTime)
+
+def resetTimer(duration):
+    global t
+    t.cancel()
+    t = Timer(duration-0.5, playNewSong)
+    t.start()
+
+def setTimer(duration):
+    global t
+    t = Timer(duration-0.5, playNewSong)
+    t.start()
+
+def cancelTimer():
+    global t
+    t.cancel()
 
 spotifyAPI = SpotifyAPI()
 aiModule = AIModule()
 rankingAI = RankingAI()
-
-
-def timeout():
-    t = Timer(rankingAI.getNextSongDuration(), timeout)
-    t.start()
-    spotifyAPI.setNextSong(rankingAI.getNextSongID())
+t = Timer(0.0, playNewSong)
+initilizedAI = False
 
 # Create your views here.
+@csrf_exempt
 def upload_image(request):
-    return JsonResponse({"Image": "Pollon"})
+    global i
+    imgdata = base64.b64decode(str(request.POST['image']))
+    image = Image.open(io.BytesIO(imgdata))
+    image = image.rotate(90)
+    filename = 'some_image{}.jpg'.format(i)
+    image.save(filename)
+    res = get_image_emotion(filename)
+    aiModule.reorder_songs(res)
+    i += 1
+    return JsonResponse({"result": True})
 
 def get_updated_info(request):
     return JsonResponse({"Updated Info": "Pollon"})
@@ -35,9 +66,11 @@ def get_token(request):
 def callback(request):
     spotifyAPI.setAuthToken(request.GET['code'])
     res1 = spotifyAPI.authorize()
-    res2 = spotifyAPI.get_tracks_from_playlist_call("4VpgpY0zaW5OKb4P7K0QNr")
-    global aiModule
-    aiModule.init(res2['items'], spotifyAPI)
+    global aiModule, initilizedAI
+    if not initilizedAI:
+        res2 = spotifyAPI.get_tracks_from_playlist_call("4VpgpY0zaW5OKb4P7K0QNr")
+        aiModule.init(res2['items'], spotifyAPI)
+        initilizedAI = True
     return HttpResponse(res1)
 
 def testing(request):
@@ -76,35 +109,64 @@ def testing(request):
 
 
 def playMusic(request):
+    timeSec = spotifyAPI.getSongProgress()
+    durationTime = aiModule.get_current_song()['track']['duration_ms'] / 1000
+    setTimer(durationTime-timeSec)
     spotifyAPI.play_song_call()
     return HttpResponse('OK')
 
 def pauseMusic(request):
+    cancelTimer()
     spotifyAPI.pause_song_call()
     return HttpResponse('OK')
 
 def playNextSong(request):
-    spotifyAPI.next_song_call()
+    playNewSong()
     return HttpResponse('OK')
 
 def playPreviousSong(request):
     timeSec = spotifyAPI.getSongProgress()
     if timeSec > 5.0:
         spotifyAPI.reset_song_call()
-        t.cancel()
-        t = Timer(20, timeout)
+        durationTime = aiModule.get_current_song()['track']['duration_ms']/1000
+        resetTimer(durationTime)
     else:
-        spotifyAPI.previous_song_call()
+        prevSong = aiModule.get_previous_song()
+        prevSongURI = prevSong['track']['uri']
+        prevDurationTime = prevSong['track']['duration_ms']/1000
+        resetTimer(prevDurationTime)
+        spotifyAPI.setNextSong(prevSongURI)
     return HttpResponse('OK')
+
+def whichSong(request):
+    currentSong = aiModule.get_current_song()
+    albumName = currentSong['track']['album']['name']
+    songName = currentSong['track']['name']
+    artistName = currentSong['track']['artists'][0]['name']
+    coverLink = currentSong['track']['album']['images'][1]['url']
+    response = {'song': songName,
+                'album': albumName,
+                'artist': artistName,
+                'cover': coverLink
+                }
+    return JsonResponse(response)
+
+def nextSongsOnTop(request):
+    currentSongs = aiModule.get_next_n_songs(3)
+    response = []
+    for currentSong in currentSongs:
+        albumName = currentSong['track']['album']['name']
+        songName = currentSong['track']['name']
+        artistName = currentSong['track']['artists'][0]['name']
+        response.append({'song': songName,
+                'album': albumName,
+                'artist': artistName
+                })
+    return JsonResponse({'data': response})
 
 def getUpcomingSongs(request):
-    return JsonResponse(spotifyAPI.getUpcomingSongsInfo())
 
-def playNewSong(request):
-    t = Timer(8, timeout)
-    t.start()
-    spotifyAPI.setNextSong(rankingAI.getNextSongID())
-    return HttpResponse('OK')
+    return JsonResponse()
 
 def init(request):
     return spotifyAPI.generateToken()

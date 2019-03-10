@@ -1,6 +1,9 @@
 import json
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
+from numpy import dot
+from numpy.linalg import norm
+import pickle
 
 class AIModule:
     def __init__(self):
@@ -14,13 +17,14 @@ class AIModule:
 
     def init(self, tracks, spotify):
         self._tracks = tracks
-        X, y = self._getTrainDataFromFilename('/home/fmartinez/FocusOn/FocusOn/ai_module/train.csv')
+        X, y = self._getTrainDataFromFilename('ai_module/train.csv')
         y = np.array([self._normalize(yi) for yi in y])
         self.trainModel(X, y)
         self.generateTracksScore(spotify)
         self._next_tracks = self._tracks
         self._previous_tracks = []
-        self._current_track = {}
+        self._current_track = self.get_next_song()
+        self._face_coeff = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     def _getTrainDataFromFilename(self, filename):
         data = np.genfromtxt(filename, delimiter=',')
@@ -28,12 +32,14 @@ class AIModule:
 
     def trainModel(self, X, y):
         self._model = RandomForestRegressor(n_estimators=100)
-        self._model.fit(X, y)
+        #self._model.fit(X, y)
+        #pickle.dump(self._model, open('model.sav', 'wb'))
+        self._model = pickle.load(open('model.sav', 'rb'))
         self._model_loaded = True
 
     def generateTracksScore(self, spotify):
         for i in range(len(self._tracks)):
-            info = json.loads(spotify.get_track_info_call(self._tracks[i]['track']['id']))['audio_features'][0]
+            info = spotify.get_track_info_call(self._tracks[i]['track']['id'])['audio_features'][0]
             aux = []
             for feature in self._trackFeatures:
                 aux.append(info[feature])
@@ -46,11 +52,24 @@ class AIModule:
         return self._normalize(self._model.predict(X))
 
     def get_next_song(self):
-        return self._next_tracks[0]
+        next_track = self._next_tracks[0]
+        self._next_tracks.pop(0)
+        if len(self._next_tracks) == 1:
+            self._next_tracks = self._tracks
+            self.reorder_songs(self._face_coeff)
+        return next_track
 
     def get_next_n_songs(self, n):
-        return None
+        if n > len(self._next_tracks):
+            self._next_tracks = self._tracks
+            self.reorder_songs(self._face_coeff)
+        if n >= len(self._next_tracks):
+            return self._next_tracks
+        else:
+            return self._next_tracks[:n]
 
+    def get_current_song(self):
+        return self._current_track
 
     def get_previous_song(self):
         if len(self._previous_tracks) == 0:
@@ -65,6 +84,9 @@ class AIModule:
     def reorder_songs(self, face_coeff):
         self._face_coeff = face_coeff
         diff_vector = []
-        for track in self._tracks:
-            None
+        for track in self._next_tracks:
+            diff_vector.append(dot(track['score'], face_coeff) / (norm(track['score']) * norm(face_coeff)))
+        self._next_tracks = [x for _, x in sorted(zip(diff_vector, self._next_tracks))]
+
+
 

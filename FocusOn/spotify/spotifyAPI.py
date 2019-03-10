@@ -183,7 +183,6 @@ class SpotifyAPI:
 
     def setNextSong(self,song_uri):
         url = "https://api.spotify.com/v1/me/player/play"
-        #parameters = {"device_id": device_id}
         headers = self.AUTH_HEADER
         body = {"uris": [song_uri]}
         headers.update({'cache-control': "no-cache"})
