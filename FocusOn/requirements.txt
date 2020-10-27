@@ -7,7 +7,7 @@ cached-property==1.5.1
 certifi==2018.10.15
 chardet==3.0.4
 configparser==3.5.0
-cryptography==2.1.4
+cryptography==3.2
 decorator==4.3.0
 defusedxml==0.5.0
 Django==1.11.17
