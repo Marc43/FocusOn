@@ -57,7 +57,7 @@ python-dateutil==2.7.5
 python-igraph==0.7.1.post6
 pytz==2018.7
 pyxdg==0.25
-PyYAML==3.13
+PyYAML==5.4
 pyzmq==17.1.2
 qtconsole==4.4.2
 requests==2.18.4
